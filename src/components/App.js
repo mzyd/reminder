@@ -1,14 +1,46 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { addReminder } from '../actions'
 
 class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      text: ''
+      text: '',
+      dueDate: '',
     }
   }
+
+  renderReminder () {
+    const { reminders } = this.props
+    return (
+      <ul className="list-group col-sm-8 mt-2">
+        {
+          reminders.map(reminder => {
+            return (
+              <li key={ reminder.id } className="list-group-item">
+                <div className="list-item">
+                  <div>{ reminder.text }</div>
+                  <div><em>time</em></div>
+                </div>
+              </li>
+            )
+          })
+        }
+      </ul>
+    )
+  }
+
+  addReminder() {
+    this.props.addReminder(
+      this.state.text,
+      this.state.dueDate
+    );
+  }
+
   render() {
-    /* console.log( "this.state: ", this.state.text ) */
+    console.log( "props : ", this.props );
+
     return (
       <div className="App">
         <div className="title">Reminder Pro</div>
@@ -20,13 +52,28 @@ class App extends Component {
                    placeholder="I have to..."
                    onChange={ (e) => this.setState({ text: e.target.value }) }
             />
+            <input
+              type="datetime-local"
+              className="form-control"
+              onChange={ (event) => this.setState({dueDate: event.target.value}) }
+            />
           </div>
-          <button type="button" className="btn btn-success">Add Reminder</button>
+          <button type="button"
+                  className="btn btn-success"
+                  onClick={ () => this.addReminder() }>
+            Add Reminder
+          </button>
         </div>
-
+        { this.renderReminder() }
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    reminders: state
+  }
+}
+
+export default connect(mapStateToProps, { addReminder })(App)
