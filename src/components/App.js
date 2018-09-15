@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { addReminder } from '../actions'
+import {
+  addReminder, deleteReminder, clearReminders
+} from '../actions'
+import moment from 'moment'
 
 class App extends Component {
   constructor (props) {
@@ -9,6 +12,10 @@ class App extends Component {
       text: '',
       dueDate: '',
     }
+  }
+
+  deleteReminder (id) {
+    this.props.deleteReminder(id)
   }
 
   renderReminder () {
@@ -21,7 +28,13 @@ class App extends Component {
               <li key={ reminder.id } className="list-group-item">
                 <div className="list-item">
                   <div>{ reminder.text }</div>
-                  <div><em>time</em></div>
+                  <div><em>{ moment(new Date(reminder.dueDate)).fromNow() }</em></div>
+                </div>
+                <div
+                  className="list-item delete-button"
+                  onClick={ () => this.deleteReminder(reminder.id) }
+                >
+              &#x2715;
                 </div>
               </li>
             )
@@ -36,6 +49,10 @@ class App extends Component {
       this.state.text,
       this.state.dueDate
     );
+  }
+
+  clearReminders () {
+    this.props.clearReminders()
   }
 
   render() {
@@ -65,15 +82,30 @@ class App extends Component {
           </button>
         </div>
         { this.renderReminder() }
+
+        <div
+          className="btn btn-danger mt-3"
+          onClick={ () => this.clearReminders() }>
+          Clear Reminders
+        </div>
       </div>
     );
   }
 }
 
 const mapStateToProps = (state) => {
+  console.log( "state: ", state );
+
   return {
     reminders: state
   }
 }
 
-export default connect(mapStateToProps, { addReminder })(App)
+export default connect(
+  mapStateToProps,
+  {
+    addReminder,
+    deleteReminder,
+    clearReminders,
+  }
+)(App)
