@@ -44,11 +44,18 @@ class App extends Component {
     )
   }
 
+  clearInput (...rest) {
+    for (let elem of rest) {
+      document.getElementById(elem).value = ''
+    }
+  }
+
   addReminder() {
     this.props.addReminder(
       this.state.text,
       this.state.dueDate
     );
+    this.clearInput('text-elem', 'date-elem')
   }
 
   clearReminders () {
@@ -56,8 +63,6 @@ class App extends Component {
   }
 
   render() {
-    console.log( "props : ", this.props );
-
     return (
       <div className="App">
         <div className="title">Reminder Pro</div>
@@ -66,18 +71,20 @@ class App extends Component {
           <div className="form-group mr-2">
             <input type="text"
                    className="form-control"
+                   id="text-elem"
                    placeholder="I have to..."
                    onChange={ (e) => this.setState({ text: e.target.value }) }
             />
             <input
               type="datetime-local"
+              id="date-elem"
               className="form-control"
               onChange={ (event) => this.setState({dueDate: event.target.value}) }
             />
           </div>
           <button type="button"
                   className="btn btn-success"
-                  onClick={ () => this.addReminder() }>
+                  onClick={ (e) => this.addReminder() }>
             Add Reminder
           </button>
         </div>
@@ -94,8 +101,6 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log( "state: ", state );
-
   return {
     reminders: state
   }
